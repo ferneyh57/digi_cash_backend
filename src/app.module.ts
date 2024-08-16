@@ -24,6 +24,7 @@ import { Features } from './config/db/entities/feature.entity';
 import { Spent } from './config/db/entities/spent.entity';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AuthModule,
     UsersModule,
     NotificationsModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [
