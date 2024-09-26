@@ -22,7 +22,7 @@ import { FeaturesModule } from './modules/features/features.module';
 import { SpentModule } from './modules/spent/spent.module';
 import { Features } from './config/db/entities/feature.entity';
 import { Spent } from './config/db/entities/spent.entity';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
 
@@ -31,15 +31,19 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'postgres',
-      port: 5432,
-      username: 'myuser',
-      password: 'mypassword',
-      database: 'mydatabase',
-      synchronize: true, // No uses en producción: podría perder datos
-      autoLoadEntities: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('POSTGRES_PORT'),
+        username: configService.get<string>('POSTGRES_USER'),
+        password: configService.get<string>('POSTGRES_PASSWORD'),
+        database: configService.get<string>('POSTGRES_DB'),
+        synchronize: true,
+        autoLoadEntities: true,
+      }),
     }),
     TypeOrmModule.forFeature([
       User,
